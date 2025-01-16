@@ -34,6 +34,34 @@ def read_file(path):
                     preferencia_alunos[aluno].append(p)
                 nota_alunos[aluno] = int(nota)
 
+def emparelhamento_estavel(matches):
+    alunos_livres = alunos
+    proximo_pedido = {aluno: 0 for aluno in alunos}
+
+    while len(alunos_livres) > 0:
+        aluno_atual = alunos_livres[0]
+        if proximo_pedido[aluno_atual] < len(preferencia_alunos[aluno_atual]):
+            projeto_atual = preferencia_alunos[aluno_atual][proximo_pedido[aluno_atual]]
+            proximo_pedido[aluno_atual]+=1
+
+            if nota_alunos[aluno_atual] >= nota_projetos[projeto_atual]:
+                if len(matches[projeto_atual]) < vagas_projetos[projeto_atual]:
+                    matches[projeto_atual].append(aluno_atual)
+
+                else:
+                    for aluno in matches[projeto_atual]:
+                        if nota_alunos[aluno] > nota_alunos[aluno_atual]:
+                            matches[projeto_atual].remove(aluno)
+                            alunos_livres.append(aluno)
+                            matches[projeto_atual].append(aluno_atual)
+                            break
+        alunos_livres.pop(0)
+        
+        matches[projeto_atual].sort(key=lambda a: nota_alunos[a])
+        print(*[nota_alunos[a] for a in matches[projeto_atual]])
+
+    return matches
+
 
 read_file("./entradaProj2.24TAG.txt")
 
@@ -46,4 +74,14 @@ print(*preferencia_alunos.items())
 print(*nota_alunos.items())
 """
 
+matches = {projeto: [] for projeto in projetos}
 
+matches = emparelhamento_estavel(matches)
+matches = emparelhamento_estavel(matches)
+
+total = 0
+
+for p, a in matches.items():
+    print(p + ":", *a)
+    total+=len(a)
+print(total)
