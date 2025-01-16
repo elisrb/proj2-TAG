@@ -235,7 +235,9 @@
 (A174):(P34, P40, P15) (4)
 (A175):(P35, P48, P24) (4)
 (A176):(P36, P19, P40) (3)
-(A177):(P37, P21, P18)(5)
+// a linha a seguir no arquivo original era: (A177):(P37, P21, P18)(5)
+// foi adicionado um espaço para se enquadrar na formatação das outras linhas
+(A177):(P37, P21, P18) (5)
 (A178):(P18, P47, P28) (3)
 (A179):(P19, P6, P49) (3)
 (A180):(P40, P34, P5) (3)
