@@ -1,3 +1,4 @@
+import random
 alunos = []
 projetos = []
 
@@ -62,7 +63,7 @@ def emparelhamento_estavel(alunos_in):
 
                 else:
                     add = True
-                    for aluno in matches[projeto_atual]:  # fazer recursivo com uma opção para substituir cada item dos alunos no match atual, e maximizar
+                    for aluno in matches[projeto_atual]:
                         if nota_alunos[aluno] > nota_alunos[aluno_atual]:
                             matches[projeto_atual].remove(aluno)
                             alunos_livres.append(aluno)
@@ -73,22 +74,33 @@ def emparelhamento_estavel(alunos_in):
                         alunos_livres.append(aluno_atual)
 
         matches[projeto_atual].sort(key=lambda a: nota_alunos[a])
-        #print(*[nota_alunos[a] for a in matches[projeto_atual]])
 
     return matches
 
-results = []
 
-alunos_aux = [aluno for aluno in alunos]
-iteracoes = 10
-for i in range(iteracoes):
-    matches = emparelhamento_estavel(alunos_aux)
-    total = 0
+aumentos = 0
+tentativas = 0
+arestas_max = 0
+
+while aumentos < 10 and tentativas < 3000:
+    matches = emparelhamento_estavel(alunos)
+    tentativas += 1
+
+    arestas = 0
     for p, a in matches.items():
         if len(a) == vagas_projetos[p]:
-            total+=len(a)
-    results.append(total)
-    aux = alunos_aux.pop(0)
-    alunos_aux.append(aux)
+            arestas+=len(a)
 
-print(*results)
+    if(arestas > arestas_max):
+        aumentos+=1
+        arestas_max = arestas
+        print("emparelhamento estável nº", aumentos)
+        print("quantidade de arestas (alunos emparelhados):", arestas)
+        print("resultado do emparelhamento, no formato {projeto}: {lista de alunos}:")
+        #for p, a in matches.items():
+            #print(p+":", *a)
+
+    random.shuffle(alunos)
+
+#print(*sorted(results, reverse=True))
+print("total de tentativas:", tentativas)
