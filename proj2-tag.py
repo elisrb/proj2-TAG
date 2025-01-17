@@ -1,5 +1,3 @@
-from itertools import permutations
-
 alunos = []
 projetos = []
 
@@ -36,10 +34,21 @@ def read_file(path):
                     preferencia_alunos[aluno].append(p)
                 nota_alunos[aluno] = int(nota)
 
-def emparelhamento_estavel(alunos):
+read_file("./entradaProj2.24TAG.txt")
+
+"""
+# PARA TESTE DA LEITURA DO ARQUIVO
+print(*alunos, *projetos)
+print(*vagas_projetos.items())
+print(*nota_projetos.items())
+print(*preferencia_alunos.items())
+print(*nota_alunos.items())
+"""
+
+def emparelhamento_estavel(alunos_in):
     matches = {projeto: [] for projeto in projetos}
-    alunos_livres = alunos
-    proximo_pedido = {aluno: 0 for aluno in alunos}
+    alunos_livres = [aluno for aluno in alunos_in]
+    proximo_pedido = {aluno: 0 for aluno in alunos_in}
 
     while len(alunos_livres) > 0:
         aluno_atual = alunos_livres.pop(0)
@@ -68,28 +77,18 @@ def emparelhamento_estavel(alunos):
 
     return matches
 
-
-read_file("./entradaProj2.24TAG.txt")
-
-"""
-# PARA TESTE DA LEITURA DO ARQUIVO
-print(*alunos, *projetos)
-print(*vagas_projetos.items())
-print(*nota_projetos.items())
-print(*preferencia_alunos.items())
-print(*nota_alunos.items())
-"""
-
 results = []
 
-print(list(permutations(alunos))[0])
-"""for p_alunos in permutations(alunos):
-    matches = emparelhamento_estavel(list(p_alunos))
+alunos_aux = [aluno for aluno in alunos]
+iteracoes = 10
+for i in range(iteracoes):
+    matches = emparelhamento_estavel(alunos_aux)
     total = 0
     for p, a in matches.items():
         if len(a) == vagas_projetos[p]:
             total+=len(a)
-
-    results.append(total)"""
+    results.append(total)
+    aux = alunos_aux.pop(0)
+    alunos_aux.append(aux)
 
 print(*results)
