@@ -1,3 +1,5 @@
+from itertools import permutations
+
 alunos = []
 projetos = []
 
@@ -40,7 +42,7 @@ def emparelhamento_estavel(alunos):
     proximo_pedido = {aluno: 0 for aluno in alunos}
 
     while len(alunos_livres) > 0:
-        aluno_atual = alunos_livres[0]
+        aluno_atual = alunos_livres.pop(0)
         if proximo_pedido[aluno_atual] < len(preferencia_alunos[aluno_atual]):
             projeto_atual = preferencia_alunos[aluno_atual][proximo_pedido[aluno_atual]]
             proximo_pedido[aluno_atual]+=1
@@ -50,14 +52,16 @@ def emparelhamento_estavel(alunos):
                     matches[projeto_atual].append(aluno_atual)
 
                 else:
+                    add = True
                     for aluno in matches[projeto_atual]:  # fazer recursivo com uma opção para substituir cada item dos alunos no match atual, e maximizar
                         if nota_alunos[aluno] > nota_alunos[aluno_atual]:
                             matches[projeto_atual].remove(aluno)
                             alunos_livres.append(aluno)
                             matches[projeto_atual].append(aluno_atual)
+                            add = False
                             break
-
-        alunos_livres.pop(0)
+                    if add:
+                        alunos_livres.append(aluno_atual)
 
         matches[projeto_atual].sort(key=lambda a: nota_alunos[a])
         #print(*[nota_alunos[a] for a in matches[projeto_atual]])
@@ -77,14 +81,15 @@ print(*nota_alunos.items())
 """
 
 results = []
-matches = emparelhamento_estavel(alunos)
-total = 0
-for p, a in matches.items():
-    #print(p + ":", *a)
-    total+=len(a)
-    if len(a) < vagas_projetos[p]:
-        print("UEPA")
-print(total)
-results.append(total)
+
+print(list(permutations(alunos))[0])
+"""for p_alunos in permutations(alunos):
+    matches = emparelhamento_estavel(list(p_alunos))
+    total = 0
+    for p, a in matches.items():
+        if len(a) == vagas_projetos[p]:
+            total+=len(a)
+
+    results.append(total)"""
 
 print(*results)
