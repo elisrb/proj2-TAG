@@ -1,4 +1,5 @@
-from random import shuffle  # função importada de biblioteca externa para randomizar a ordem de uma lista
+# função importada de biblioteca externa para aleatorizar a ordem de uma lista
+from random import shuffle
 
 # INICIALIZAÇÃO DE VARIÁVEIS
 
@@ -90,26 +91,21 @@ def emparelhamento_estavel(alunos_in):
             if nota_alunos[aluno_atual] >= nota_projetos[projeto_atual]:
                 # conferir se ainda há vagas para o projeto
                 if len(matches[projeto_atual]) < vagas_projetos[projeto_atual]:
-                    # caso haja vagas, o aluno entra
                     matches[projeto_atual].append(aluno_atual)
                 else:
-                    # caso não haja vagas, conferir os alunos que já estão no projeto
-                    add = True
-                    for aluno in matches[projeto_atual]:
-                        if nota_alunos[aluno] > nota_alunos[aluno_atual]:
-                            # caso haja aluno com nota maior que o atual, ele sai
-                            # (permite que ele entre em outros projetos mais exigentes)
-                            matches[projeto_atual].remove(aluno)
-                            alunos_livres.append(aluno)
-                            matches[projeto_atual].append(aluno_atual)
-                            add = False
-                            break
-                    if add:
-                        # se não há aluno com nota maior que o atual, o atual está livre
+                    # assumindo que os projetos preferem os alunos com maiores notas
+                    aluno = matches[projeto_atual][0]
+                    if nota_alunos[aluno] < nota_alunos[aluno_atual]:
+                        # se há aluno com nota menor que o atual, ele sai e o atual entra
+                        matches[projeto_atual].remove(aluno)
+                        alunos_livres.append(aluno)
+                        matches[projeto_atual].append(aluno_atual)
+                    else:
+                        # se não há aluno com nota menor que o atual, o atual está livre
                         alunos_livres.append(aluno_atual)
 
-        # ordena os alunos do projeto por nota para buscar os alunos com maior nota primeiro
-        matches[projeto_atual].sort(key=lambda a: nota_alunos[a], reverse=True)
+        # ordena os alunos do projeto por nota para buscar o aluno com menor nota primeiro
+        matches[projeto_atual].sort(key=lambda a: nota_alunos[a])
 
     return matches  # retorna um emparelhamento estável
 
@@ -117,35 +113,52 @@ def emparelhamento_estavel(alunos_in):
 read_file("./entradaProj2.24TAG.txt")
 
 # GERAÇÃO DE EMPARELHAMENTOS ESTÁVEIS: chama a função "emparelhamento_estavel"
-aumentos = 0    # quantos emparelhamentos gerados que são maiores que todos os outros até então
+aumentos = 0    # quantos emparelhamentos gerados são maiores que todos os outros até então
 tentativas = 0  # total de emparelhamentos gerados
 arestas_max = 0 # arestas (alunos emparelhados) do maior emparelhamento até agora
 
 """
-O loop a seguir gera vários emparelhamentos possíveis pela função "emparelhamento_estavel".
-Em um cenário onde há poder computacional ilimitado, seria possível testar todas as permutações
-da lista de alunos e comparar os emparelhamentos 
+O loop a seguir gera vários emparelhamentos possíveis pela função "emparelhamento_estavel". Em
+um cenário onde há poder computacional ilimitado, seria possível testar todas as permutações
+da lista de alunos e comparar os emparelhamentos para encontrar o máximo. Porém, para permitir
+a execução deste código, foi necessário limitar o número de tentativas para 1000.
+
+A cada tentativa, a ordem da lista de alunos é aleatorizada pela função "shuffle", importada
+acima. Desta forma, são gerados emparelhamentos para até 1000 permutações aleatórias da lista
+de alunos. Este loop confere também o número de vagas para cada projeto, de forma a anular as
+arestas de alunos que foram emparelhados a projetos que não foram completamente preenchidos. Em
+seguida, é feita uma contagem do número de arestas válidas do emparelhamento gerado, e caso ele
+seja um aumento em relação aos anteriores, ele é mostrado na tela.
+
+O objetivo deste projeto é chegar a 10 aumentos, mas isso nem sempre será possível. O último
+emparelhamento mostrado será o maior encontrado nas tentativas, mas não há garantia de que ele
+é o emparelhamento estável máximo para o problema.
 """
-while aumentos < 10 and tentativas < 3000:
+while aumentos < 10 and tentativas < 1000:
+    # gera o emparelhamento
     matches = emparelhamento_estavel(alunos)
     tentativas += 1
 
+    # checa se as arestas são válidas
     arestas = 0
     for p, a in matches.items():
         if len(a) == vagas_projetos[p]:
             arestas+=len(a)
 
+    # caso o emparelhamento seja um aumento em relação aos anteriores, mostra na tela
     if(arestas > arestas_max):
-        aumentos+=1
         arestas_max = arestas
-        print("emparelhamento estável nº", aumentos)
+        print("emparelhamento estável nº", tentativas)
+        print("aumento nº", aumentos) if aumentos > 0 else ""
         print("quantidade de arestas (alunos emparelhados):", arestas)
         print("resultado do emparelhamento, no formato {projeto}: {lista de alunos}:")
-        #for p, a in matches.items():
-            #print(p+":", *a)
+        for p, a in matches.items():
+            print(p+":", *a)
+        aumentos+=1
+        print("\n", end="")
 
+    # aleatoriza a ordem da lista de alunos
     shuffle(alunos)
 
-#print(*sorted(results, reverse=True))
 print("total de tentativas:", tentativas)
 print("total de arestas no maior emparelhamento encontrado:", arestas_max)
