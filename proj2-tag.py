@@ -64,7 +64,7 @@ def emparelhamento_estavel(alunos_in):
                 else:
                     add = True
                     for aluno in matches[projeto_atual]:
-                        if nota_alunos[aluno] > nota_alunos[aluno_atual]:
+                        if nota_alunos[aluno] < nota_alunos[aluno_atual]:
                             matches[projeto_atual].remove(aluno)
                             alunos_livres.append(aluno)
                             matches[projeto_atual].append(aluno_atual)
@@ -77,12 +77,14 @@ def emparelhamento_estavel(alunos_in):
 
     return matches
 
+# TESTAR SE O EMPARELHAMENTO É ESTAVEL MESMO
+# TROCA DE ALUNO COM NOTA MAIOR POSSIVELMENTE DEU RUIM
 
 aumentos = 0
 tentativas = 0
 arestas_max = 0
 
-while aumentos < 10 and tentativas < 3000:
+while aumentos < 10 and tentativas < 1:
     matches = emparelhamento_estavel(alunos)
     tentativas += 1
 
@@ -97,8 +99,8 @@ while aumentos < 10 and tentativas < 3000:
         print("emparelhamento estável nº", aumentos)
         print("quantidade de arestas (alunos emparelhados):", arestas)
         print("resultado do emparelhamento, no formato {projeto}: {lista de alunos}:")
-        #for p, a in matches.items():
-            #print(p+":", *a)
+        for p, a in matches.items():
+            print(p+":", *a)
 
     random.shuffle(alunos)
 
