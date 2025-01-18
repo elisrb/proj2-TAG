@@ -12,7 +12,7 @@ Tendo um algoritmo que gera um emparelhamento estável, resta encontrar o máxim
 
 Uma documentação mais detalhada do passo a passo do algoritmo utilizado pode ser encontrada nos comentários do código fonte.
 
-Referências:
+### Referências:
 
 Abraham, D.J. and Irving, R.W. and Manlove, D.F. (2007). Two algorithms for the student-project allocation problem.
 
